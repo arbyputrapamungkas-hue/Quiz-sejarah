@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Semua Mata Pelajaran</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #e0f2fe;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 650px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px #888;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1d4ed8;
+        }
+
+        h2 {
+            text-align: center;
+            color: #1e3a8a;
+        }
+
+        .mapel {
+            display: block;
+            width: 100%;
+            padding: 13px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 8px;
+            background: #2563eb;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .mapel:hover {
+            background: #1e40af;
+        }
+
+        #nama-mapel {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        #nomor {
+            font-weight: bold;
+            color: #475569;
+        }
+
+        #pertanyaan {
+            font-size: 19px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .jawaban {
+            display: block;
+            width: 100%;
+            padding: 13px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 8px;
+            background: #dbeafe;
+            text-align: left;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .jawaban:hover {
+            background: #93c5fd;
+        }
+
+        .jawaban:disabled {
+            cursor: not-allowed;
+            color: #111827;
+        }
+
+        .benar {
+            background: #86efac !important;
+        }
+
+        .salah {
+            background: #fca5a5 !important;
+        }
+
+        #lanjut,
+        #ulang,
+        #ganti {
+            width: 100%;
+            padding: 13px;
+            margin-top: 15px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #lanjut {
+            background: #16a34a;
+        }
+
+        #ulang {
+            background: #2563eb;
+        }
+
+        #ganti {
+            background: #64748b;
+        }
+
+        #hasil {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: #166534;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Quiz Semua Mata Pelajaran</h1>
+
+        <div id="menu-mapel">
+            <h2>Pilih Mata Pelajaran</h2>
+            <div id="daftar-mapel"></div>
+        </div>
+
+        <div id="quiz" style="display: none;">
+            <p id="nama-mapel"></p>
+            <p id="nomor"></p>
+            <p id="pertanyaan"></p>
+
+            <div id="daftar-jawaban"></div>
+
+            <button id="lanjut">
+                Soal Berikutnya
+            </button>
+
+            <button id="ganti">
+                Ganti Mata Pelajaran
+            </button>
+        </div>
+
+        <div id="hasil"></div>
+
+        <button id="ulang" style="display: none;">
+            Ulangi Quiz
+        </button>
+    </div>
+
+    <script>
+        const bankSoal = {
+            "Matematika": [
+                ["Hasil dari 12 + 8 adalah ...", ["18", "20", "22", "24"], 1],
+                ["Hasil dari 9 x 7 adalah ...", ["56", "63", "72", "81"], 1],
+                ["Akar kuadrat dari 64 adalah ...", ["6", "7", "8", "9"], 2],
+                ["Luas persegi dengan sisi 5 cm adalah ...", ["10 cm2", "20 cm2", "25 cm2", "30 cm2"], 2],
+                ["Hasil dari 100 dibagi 4 adalah ...", ["20", "25", "30", "40"], 1],
+                ["Bangun datar yang memiliki tiga sisi adalah ...", ["Persegi", "Segitiga", "Lingkaran", "Trapesium"], 1],
+                ["Nilai dari 3 pangkat 2 adalah ...", ["6", "8", "9", "12"], 2],
+                ["Bilangan prima berikut adalah ...", ["4", "6", "9", "11"], 3],
+                ["Setengah dari 80 adalah ...", ["20", "30", "40", "50"], 2],
+                ["Hasil dari 15 - 7 adalah ...", ["6", "7", "8", "9"], 2]
+            ],
+
+            "Fisika": [
+                ["Satuan SI untuk panjang adalah ...", ["Kilogram", "Meter", "Sekon", "Newton"], 1],
+                ["Alat untuk mengukur suhu adalah ...", ["Barometer", "Termometer", "Amperemeter", "Dinamometer"], 1],
+                ["Satuan gaya adalah ...", ["Joule", "Watt", "Newton", "Pascal"], 2],
+                ["Energi karena gerak disebut energi ...", ["Panas", "Kinetik", "Kimia", "Cahaya"], 1],
+                ["Kecepatan adalah jarak dibagi ...", ["Massa", "Waktu", "Gaya", "Suhu"], 1],
+                ["Alat mengukur kuat arus listrik adalah ...", ["Voltmeter", "Amperemeter", "Termometer", "Barometer"], 1],
+                ["Benda yang dapat ditarik magnet adalah ...", ["Kayu", "Plastik", "Besi", "Kertas"], 2],
+                ["Sumber energi utama bagi bumi adalah ...", ["Bulan", "Matahari", "Bintang", "Angin"], 1],
+                ["Perubahan posisi benda disebut ...", ["Gerak", "Massa", "Suhu", "Tekanan"], 0],
+                ["Gaya dapat menyebabkan benda ...", ["Berubah gerak", "Menghilang", "Mengecil", "Membeku"], 0]
+            ],
+
+            "Kimia": [
+                ["Partikel terkecil penyusun unsur disebut ...", ["Atom", "Sel", "Jaringan", "Organ"], 0],
+                ["Rumus kimia air adalah ...", ["CO2", "O2", "H2O", "NaCl"], 2],
+                ["Zat dengan pH kurang dari 7 bersifat ...", ["Basa", "Asam", "Netral", "Garam"], 1],
+                ["Contoh unsur logam adalah ...", ["Oksigen", "Besi", "Karbon", "Belerang"], 1],
+                ["Garam dapur memiliki rumus ...", ["H2O", "CO2", "NaCl", "O2"], 2],
+                ["Gas yang diperlukan untuk bernapas adalah ...", ["Nitrogen", "Oksigen", "Karbon dioksida", "Hidrogen"], 1],
+                ["Perubahan cair menjadi gas disebut ...", ["Membeku", "Menguap", "Mencair", "Mengembun"], 1],
+                ["Air dan gula termasuk campuran ...", ["Heterogen", "Homogen", "Padat", "Gas"], 1],
+                ["CO2 adalah ...", ["Oksigen", "Karbon dioksida", "Hidrogen", "Nitrogen"], 1],
+                ["Alat mengukur volume cairan adalah ...", ["Neraca", "Gelas ukur", "Termometer", "Mikroskop"], 1]
+            ],
+
+            "Biologi": [
+                ["Unit terkecil makhluk hidup adalah ...", ["Atom", "Sel", "Organ", "Jaringan"], 1],
+                ["Organ untuk memompa darah adalah ...", ["Paru-paru", "Jantung", "Ginjal", "Lambung"], 1],
+                ["Tumbuhan membuat makanan melalui ...", ["Respirasi", "Fotosintesis", "Pencernaan", "Ekskresi"], 1],
+                ["Hewan pemakan tumbuhan disebut ...", ["Karnivora", "Herbivora", "Omnivora", "Insektivora"], 1],
+                ["Manusia bernapas menggunakan ...", ["Insang", "Paru-paru", "Trakea", "Kulit"], 1],
+                ["Bagian tumbuhan yang menyerap air adalah ...", ["Daun", "Bunga", "Akar", "Buah"], 2],
+                ["Pertukaran oksigen terjadi di ...", ["Alveolus", "Lambung", "Usus", "Hati"], 0],
+                ["Metamorfosis sempurna dialami oleh ...", ["Kucing", "Ayam", "Kupu-kupu", "Sapi"], 2],
+                ["Wortel banyak mengandung ...", ["Vitamin A", "Vitamin B", "Vitamin C", "Vitamin D"], 0],
+                ["Tulang berfungsi untuk ...", ["Mencerna makanan", "Menopang tubuh", "Memompa darah", "Menghasilkan suara"], 1]
+            ],
+
+            "Informatika": [
+                ["Kepanjangan CPU adalah ...", ["Central Processing Unit", "Computer Personal Unit", "Central Program User", "Control Processing Utility"], 0],
+                ["Alat untuk mengetik disebut ...", ["Monitor", "Keyboard", "Printer", "Speaker"], 1],
+                ["Contoh sistem operasi adalah ...", ["Windows", "Google", "YouTube", "HTML"], 0],
+                ["Otak komputer disebut ...", ["CPU", "Mouse", "Monitor", "Flashdisk"], 0],
+                ["Program untuk menjelajah internet disebut ...", ["Browser", "Compiler", "Kalkulator", "Antivirus"], 0],
+                ["Python termasuk bahasa ...", ["Pemrograman", "Markup", "Musik", "Desain"], 0],
+                ["Alat untuk menampilkan gambar adalah ...", ["Monitor", "Keyboard", "Mouse", "Mikrofon"], 0],
+                ["Penyimpanan sementara komputer disebut ...", ["RAM", "ROM", "Hard disk", "CD"], 0],
+                ["Internet berguna untuk ...", ["Menghubungkan jaringan", "Memasak", "Mencetak uang", "Menghapus data"], 0],
+                ["HTML digunakan untuk membuat ...", ["Struktur halaman web", "Musik", "Kamera", "Perangkat keras"], 0]
+            ],
+
+            "Sejarah": [
+                ["Indonesia merdeka pada ...", ["20 Mei 1908", "28 Oktober 1928", "17 Agustus 1945", "10 November 1945"], 2],
+                ["Pembaca Proklamasi adalah ...", ["Mohammad Hatta", "Soekarno", "Sayuti Melik", "Wikana"], 1],
+                ["Pengetik teks Proklamasi adalah ...", ["Soekarno", "Sayuti Melik", "Wikana", "Hatta"], 1],
+                ["Sumpah Pemuda diperingati pada ...", ["20 Mei", "28 Oktober", "17 Agustus", "10 November"], 1],
+                ["Budi Utomo berdiri pada tahun ...", ["1908", "1928", "1945", "1950"], 0],
+                ["Hari Pahlawan diperingati setiap ...", ["10 November", "17 Agustus", "1 Juni", "28 Oktober"], 0],
+                ["Pancasila disahkan pada ...", ["1 Juni 1945", "17 Agustus 1945", "18 Agustus 1945", "10 November 1945"], 2],
+                ["Pencipta Indonesia Raya adalah ...", ["Ibu Sud", "W.R. Supratman", "C. Simanjuntak", "Ismail Marzuki"], 1],
+                ["Rengasdengklok berkaitan dengan ...", ["Proklamasi", "Perang Diponegoro", "Kongres Pemuda", "ASEAN"], 0],
+                ["Kongres Pemuda II menghasilkan ...", ["Pancasila", "Sumpah Pemuda", "UUD 1945", "Dekret Presiden"], 1]
+            ],
+
+            "Geografi": [
+                ["Benua terbesar adalah ...", ["Afrika", "Asia", "Eropa", "Australia"], 1],
+                ["Indonesia terletak di antara Asia dan ...", ["Afrika", "Eropa", "Australia", "Amerika"], 2],
+                ["Garis lintang 0 derajat disebut ...", ["Garis bujur", "Khatulistiwa", "Garis tanggal", "Garis pantai"], 1],
+                ["Gunung tertinggi Indonesia adalah ...", ["Semeru", "Merapi", "Puncak Jaya", "Kerinci"], 2],
+                ["Laut yang memisahkan pulau disebut ...", ["Selat", "Teluk", "Danau", "Sungai"], 0],
+                ["Daratan yang menjorok ke laut disebut ...", ["Tanjung", "Teluk", "Selat", "Delta"], 0],
+                ["Peta digunakan untuk menunjukkan ...", ["Letak tempat", "Rasa makanan", "Jenis hewan", "Warna pakaian"], 0],
+                ["Gunung dan bukit termasuk kenampakan ...", ["Buatan", "Alam", "Sosial", "Ekonomi"], 1],
+                ["Kumpulan beberapa pulau disebut ...", ["Benua", "Kepulauan", "Pegunungan", "Dataran"], 1],
+                ["Sungai terpanjang Indonesia adalah ...", ["Kapuas", "Musi", "Brantas", "Bengawan Solo"], 0]
+            ],
+
+            "Ekonomi": [
+                ["Kegiatan menghasilkan barang disebut ...", ["Produksi", "Konsumsi", "Distribusi", "Promosi"], 0],
+                ["Pengguna barang disebut ...", ["Produsen", "Konsumen", "Distributor", "Agen"], 1],
+                ["Penyaluran barang disebut ...", ["Produksi", "Konsumsi", "Distribusi", "Investasi"], 2],
+                ["Alat pembayaran yang sah adalah ...", ["Barang", "Uang", "Jasa", "Modal"], 1],
+                ["Tempat penjual dan pembeli bertemu disebut ...", ["Pasar", "Bank", "Koperasi", "Kantor"], 0],
+                ["Menjual barang ke luar negeri disebut ...", ["Impor", "Ekspor", "Konsumsi", "Produksi"], 1],
+                ["Membeli barang dari luar negeri disebut ...", ["Ekspor", "Impor", "Distribusi", "Investasi"], 1],
+                ["Koperasi berasaskan ...", ["Persaingan", "Kekeluargaan", "Keuntungan", "Kekuasaan"], 1],
+                ["Kebutuhan pokok disebut kebutuhan ...", ["Primer", "Sekunder", "Tersier", "Tambahan"], 0],
+                ["Bank digunakan sebagai tempat ...", ["Menyimpan uang", "Menanam padi", "Membuat pakaian", "Menjual sayur"], 0]
+            ],
+
+            "Sosiologi": [
+                ["Hubungan timbal balik manusia disebut ...", ["Interaksi sosial", "Produksi", "Mobilitas", "Persaingan"], 0],
+                ["Manusia disebut makhluk ...", ["Individu", "Sosial", "Ekonomi", "Politik"], 1],
+                ["Aturan dalam masyarakat disebut ...", ["Norma", "Harga", "Peta", "Produksi"], 0],
+                ["Kerja sama adalah bentuk ...", ["Interaksi sosial", "Konflik", "Perpecahan", "Persaingan"], 0],
+                ["Pertentangan dua pihak disebut ...", ["Akomodasi", "Konflik", "Asimilasi", "Kerja sama"], 1],
+                ["Keluarga termasuk kelompok sosial ...", ["Primer", "Sekunder", "Sementara", "Formal"], 0],
+                ["Perubahan dalam masyarakat disebut ...", ["Perubahan sosial", "Perubahan cuaca", "Produksi", "Konsumsi"], 0],
+                ["Menghormati orang lain termasuk norma ...", ["Kesopanan", "Ekonomi", "Hukum dagang", "Produksi"], 0],
+                ["Gotong royong mencerminkan ...", ["Individualisme", "Kebersamaan", "Persaingan", "Permusuhan"], 1],
+                ["Perbedaan suku dan budaya disebut ...", ["Keberagaman", "Keseragaman", "Konflik", "Urbanisasi"], 0]
+            ],
+
+            "Bahasa Indonesia": [
+                ["Gagasan utama adalah ...", ["Pokok pikiran", "Kalimat terakhir", "Kata sulit", "Judul"], 0],
+                ["Lawan kata tinggi adalah ...", ["Panjang", "Rendah", "Besar", "Lebar"], 1],
+                ["Persamaan kata indah adalah ...", ["Buruk", "Cantik", "Kotor", "Lambat"], 1],
+                ["Cerita dengan tokoh hewan disebut ...", ["Fabel", "Biografi", "Berita", "Pidato"], 0],
+                ["Kalimat untuk memerintah disebut ...", ["Kalimat tanya", "Kalimat berita", "Kalimat perintah", "Kalimat seru"], 2],
+                ["Teks langkah-langkah disebut teks ...", ["Deskripsi", "Prosedur", "Narasi", "Eksposisi"], 1],
+                ["Kata berlari termasuk kata ...", ["Benda", "Kerja", "Sifat", "Bilangan"], 1],
+                ["Kalimat berita diakhiri tanda ...", ["Koma", "Titik", "Tanya", "Seru"], 1],
+                ["Pemberi informasi wawancara disebut ...", ["Pewawancara", "Narasumber", "Pembaca", "Penonton"], 1],
+                ["Pantun memiliki ... baris.", ["2", "3", "4", "5"], 2]
+            ],
+
+            "Bahasa Inggris": [
+                ["Arti kata house adalah ...", ["Rumah", "Sekolah", "Kantor", "Taman"], 0],
+                ["I ... a student.", ["am", "is", "are", "be"], 0],
+                ["She ... a book.", ["read", "reads", "reading", "are read"], 1],
+                ["The opposite of big is ...", ["Tall", "Small", "Long", "Wide"], 1],
+                ["English word for anjing is ...", ["Cat", "Bird", "Dog", "Fish"], 2],
+                ["Good morning berarti ...", ["Selamat malam", "Selamat pagi", "Selamat siang", "Selamat jalan"], 1],
+                ["They ... playing football.", ["is", "am", "are", "be"], 2],
+                ["The color of grass is ...", ["Blue", "Green", "Red", "Black"], 1],
+                ["There ... two pencils.", ["is", "am", "are", "be"], 2],
+                ["Thank you berarti ...", ["Maaf", "Tolong", "Terima kasih", "Sama-sama"], 2]
+            ],
+
+            "Seni Budaya": [
+                ["Seni yang menggunakan bunyi disebut seni ...", ["Rupa", "Musik", "Tari", "Teater"], 1],
+                ["Angklung berasal dari ...", ["Jawa Barat", "Papua", "Bali", "Sumatra Barat"], 0],
+                ["Tari Saman berasal dari ...", ["Aceh", "Jawa Tengah", "Bali", "Maluku"], 0],
+                ["Menggambar dan melukis termasuk seni ...", ["Musik", "Rupa", "Tari", "Drama"], 1],
+                ["Alat musik yang dimainkan dengan dipukul adalah ...", ["Gitar", "Piano", "Kendang", "Seruling"], 2],
+                ["Batik merupakan karya seni ...", ["Lukis", "Tekstil", "Musik", "Tari"], 1],
+                ["Seni pertunjukan dengan dialog disebut ...", ["Teater", "Patung", "Lukisan", "Kerajinan"], 0],
+                ["Kolintang berasal dari ...", ["Sulawesi Utara", "Jawa Barat", "Aceh", "Papua"], 0],
+                ["Tari Kecak berasal dari ...", ["Bali", "Jawa Timur", "Kalimantan", "Riau"], 0],
+                ["Patung termasuk karya seni ...", ["Dua dimensi", "Tiga dimensi", "Satu dimensi", "Datar"], 1]
+            ],
+
+            "Pendidikan Pancasila": [
+                ["Jumlah sila Pancasila adalah ...", ["3", "4", "5", "6"], 2],
+                ["Lambang sila pertama adalah ...", ["Bintang", "Rantai", "Pohon beringin", "Kepala banteng"], 0],
+                ["Semboyan bangsa Indonesia adalah ...", ["Tut Wuri Handayani", "Bhinneka Tunggal Ika", "Jas Merah", "Ing Ngarsa Sung Tuladha"], 1],
+                ["Dasar negara Indonesia adalah ...", ["UUD", "Pancasila", "Bendera", "Bahasa"], 1],
+                ["Contoh sikap persatuan adalah ...", ["Bertengkar", "Gotong royong", "Mengejek", "Memaksakan kehendak"], 1],
+                ["Musyawarah bertujuan mencapai ...", ["Pertengkaran", "Mufakat", "Kemenangan pribadi", "Perbedaan"], 1],
+                ["Warna bendera Indonesia adalah ...", ["Merah putih", "Biru putih", "Merah kuning", "Hijau putih"], 0],
+                ["Lagu kebangsaan Indonesia adalah ...", ["Garuda Pancasila", "Indonesia Raya", "Hari Merdeka", "Bagimu Negeri"], 1],
+                ["Menghargai perbedaan disebut sikap ...", ["Toleransi", "Egois", "Sombong", "Tidak peduli"], 0],
+                ["UUD 1945 merupakan ... negara.", ["Dasar hukum", "Lagu", "Lambang", "Bahasa"], 0]
+            ],
+
+            "Pendidikan Agama": [
+                ["Rukun Islam pertama adalah ...", ["Salat", "Syahadat", "Zakat", "Puasa"], 1],
+                ["Salat wajib sehari sebanyak ... waktu.", ["3", "4", "5", "6"], 2],
+                ["Puasa wajib dilakukan pada bulan ...", ["Syawal", "Ramadan", "Muharam", "Rajab"], 1],
+                ["Kitab suci umat Islam adalah ...", ["Al-Qur'an", "Weda", "Tripitaka", "Taurat"], 0],
+                ["Zakat termasuk rukun Islam ke ...", ["1", "2", "3", "4"], 2],
+                ["Salat Subuh terdiri dari ... rakaat.", ["1", "2", "3", "4"], 1],
+                ["Tempat ibadah umat Islam disebut ...", ["Gereja", "Masjid", "Pura", "Wihara"], 1],
+                ["Hari raya setelah Ramadan adalah ...", ["Idulfitri", "Iduladha", "Natal", "Waisak"], 0],
+                ["Berkata sesuai kenyataan disebut ...", ["Dusta", "Jujur", "Sombong", "Malas"], 1],
+                ["Menolong orang lain merupakan perbuatan ...", ["Tercela", "Terpuji", "Dilarang", "Sia-sia"], 1]
+            ],
+
+            "PJOK": [
+                ["Jumlah pemain sepak bola satu tim adalah ...", ["9", "10", "11", "12"], 2],
+                ["Olahraga menggunakan raket dan kok adalah ...", ["Tenis", "Bulu tangkis", "Basket", "Voli"], 1],
+                ["Pemanasan sebelum olahraga berguna untuk ...", ["Mencegah cedera", "Membuat lelah", "Mengurangi gerak", "Menghentikan napas"], 0],
+                ["Menendang bola banyak digunakan dalam ...", ["Sepak bola", "Renang", "Catur", "Bulu tangkis"], 0],
+                ["Jumlah pemain bola voli satu tim adalah ...", ["5", "6", "7", "8"], 1],
+                ["Lari jarak pendek disebut ...", ["Sprint", "Maraton", "Jalan cepat", "Lompat"], 0],
+                ["Push-up melatih otot ...", ["Lengan", "Telinga", "Mata", "Leher"], 0],
+                ["Renang dilakukan di ...", ["Lapangan", "Kolam", "Jalan raya", "Gedung"], 1],
+                ["Melempar dan menangkap bola ada dalam permainan ...", ["Kasti", "Catur", "Bulu tangkis", "Lompat jauh"], 0],
+                ["Pendinginan setelah olahraga berguna untuk ...", ["Mengembalikan kondisi tubuh", "Menambah cedera", "Menghentikan jantung", "Mengurangi oksigen"], 0]
+            ]
+        };
+
+        let mapelSekarang = "";
+        let soalAktif = [];
+        let nomorSekarang = 0;
+        let skor = 0;
+        let sudahMenjawab = false;
+
+        const daftarMapel = Object.keys(bankSoal);
+        const hurufPilihan = ["A", "B", "C", "D"];
+
+        const menuMapel = document.getElementById("menu-mapel");
+        const quiz = document.getElementById("quiz");
+        const hasil = document.getElementById("hasil");
+        const ulang = document.getElementById("ulang");
+        const daftarMapelElement =
+            document.getElementById("daftar-mapel");
+
+        daftarMapel.forEach(function(nama) {
+            const tombol = document.createElement("button");
+
+            tombol.textContent = nama;
+            tombol.className = "mapel";
+
+            tombol.addEventListener("click", function() {
+                mulaiQuiz(nama);
+            });
+
+            daftarMapelElement.appendChild(tombol);
+        });
+
+        function mulaiQuiz(nama) {
+            mapelSekarang = nama;
+            soalAktif = bankSoal[nama];
+            nomorSekarang = 0;
+            skor = 0;
+
+            menuMapel.style.display = "none";
+            quiz.style.display = "block";
+            hasil.innerHTML = "";
+            ulang.style.display = "none";
+
+            document.getElementById("nama-mapel").textContent =
+                "Mata Pelajaran: " + mapelSekarang;
+
+            tampilkanSoal();
+        }
+
+        function tampilkanSoal() {
+            const data = soalAktif[nomorSekarang];
+
+            document.getElementById("nomor").textContent =
+                "Soal " + (nomorSekarang + 1) +
+                " dari " + soalAktif.length;
+
+            document.getElementById("pertanyaan").textContent =
+                data[0];
+
+            const daftarJawaban =
+                document.getElementById("daftar-jawaban");
+
+            daftarJawaban.innerHTML = "";
+            sudahMenjawab = false;
+
+            data[1].forEach(function(pilihan, index) {
+                const tombol = document.createElement("button");
+
+                tombol.textContent =
+                    hurufPilihan[index] + ". " + pilihan;
+
+                tombol.className = "jawaban";
+
+                tombol.addEventListener("click", function() {
+                    periksaJawaban(index, tombol);
+                });
+
+                daftarJawaban.appendChild(tombol);
+            });
+
+            if (nomorSekarang === soalAktif.length - 1) {
+                document.getElementById("lanjut").textContent =
+                    "Lihat Hasil";
+            } else {
+                document.getElementById("lanjut").textContent =
+                    "Soal Berikutnya";
+            }
+        }
+
+        function periksaJawaban(index, tombolDipilih) {
+            if (sudahMenjawab) {
+                return;
+            }
+
+            sudahMenjawab = true;
+
+            const jawabanBenar = soalAktif[nomorSekarang][2];
+            const semuaJawaban =
+                document.querySelectorAll(".jawaban");
+
+            semuaJawaban.forEach(function(tombol, posisi) {
+                tombol.disabled = true;
+
+                if (posisi === jawabanBenar) {
+                    tombol.classList.add("benar");
+                }
+            });
+
+            if (index === jawabanBenar) {
+                tombolDipilih.classList.add("benar");
+                skor++;
+            } else {
+                tombolDipilih.classList.add("salah");
+            }
+        }
+
+        document.getElementById("lanjut")
+            .addEventListener("click", function() {
+                soalBerikutnya();
+            });
+
+        function soalBerikutnya() {
+            if (!sudahMenjawab) {
+                alert("Pilih jawaban terlebih dahulu!");
+                return;
+            }
+
+            nomorSekarang++;
+
+            if (nomorSekarang < soalAktif.length) {
+                tampilkanSoal();
+            } else {
+                tampilkanHasil();
+            }
+        }
+
+        function tampilkanHasil() {
+            quiz.style.display = "none";
+
+            const nilai = Math.round(
+                (skor / soalAktif.length) * 100
+            );
+
+            hasil.innerHTML =
+                "Quiz selesai!<br><br>" +
+                "Mata Pelajaran: " + mapelSekarang +
+                "<br>Jawaban benar: " + skor +
+                " dari " + soalAktif.length +
+                "<br>Nilai: " + nilai;
+
+            ulang.style.display = "block";
+        }
+
+        ulang.addEventListener("click", function() {
+            mulaiQuiz(mapelSekarang);
+        });
+
+        document.getElementById("ganti")
+            .addEventListener("click", function() {
+                quiz.style.display = "none";
+                hasil.innerHTML = "";
+                ulang.style.display = "none";
+                menuMapel.style.display = "block";
+            });
+    </script>
+</body>
+</html>
