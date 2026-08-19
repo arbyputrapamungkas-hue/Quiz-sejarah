@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Quiz 6 Mata Pelajaran</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 720px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 18px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: #1d4ed8;
+            margin-top: 0;
+        }
+
+        h2 {
+            text-align: center;
+            color: #1e3a8a;
+        }
+
+        .deskripsi {
+            text-align: center;
+            color: #475569;
+            margin-bottom: 25px;
+        }
+
+        .mapel {
+            width: 100%;
+            padding: 15px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 10px;
+            background: #2563eb;
+            color: white;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .mapel:hover {
+            background: #1e40af;
+            transform: scale(1.02);
+        }
+
+        .header-kuis {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            border-bottom: 2px solid #dbeafe;
+            padding-bottom: 12px;
+        }
+
+        #nama-mapel {
+            color: #2563eb;
+            font-weight: bold;
+            font-size: 18px;
+            margin: 0;
+        }
+
+        #nomor {
+            color: #475569;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        #skor-sementara {
+            color: #166534;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        #pertanyaan {
+            font-size: 20px;
+            font-weight: bold;
+            color: #1e293b;
+            line-height: 1.5;
+            margin-top: 25px;
+        }
+
+        .jawaban {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            margin: 12px 0;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            background: #dbeafe;
+            color: #1e293b;
+            text-align: left;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .jawaban:hover {
+            background: #93c5fd;
+        }
+
+        .jawaban:disabled {
+            cursor: not-allowed;
+        }
+
+        .benar {
+            background: #86efac !important;
+            border-color: #15803d;
+        }
+
+        .salah {
+            background: #fca5a5 !important;
+            border-color: #b91c1c;
+        }
+
+        .tombol {
+            width: 100%;
+            padding: 14px;
+            margin-top: 15px;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .tombol:hover {
+            opacity: 0.85;
+        }
+
+        #lanjut {
+            background: #16a34a;
+        }
+
+        #ganti {
+            background: #64748b;
+        }
+
+        #ulang {
+            background: #2563eb;
+        }
+
+        #hasil {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            line-height: 1.7;
+            color: #166534;
+            margin-top: 20px;
+        }
+
+        .keterangan {
+            text-align: center;
+            color: #475569;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 500px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 18px;
+            }
+
+            #pertanyaan {
+                font-size: 18px;
+            }
+
+            .header-kuis {
+                display: block;
+            }
+
+            #nomor,
+            #skor-sementara {
+                margin-top: 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Quiz Pintar</h1>
+
+        <!-- MENU PILIH MAPEL -->
+        <section id="menu-mapel">
+            <h2>Pilih Mata Pelajaran</h2>
+
+            <p class="deskripsi">
+                Pilih salah satu mata pelajaran untuk memulai kuis.
+            </p>
+
+            <div id="daftar-mapel"></div>
+        </section>
+
+        <!-- HALAMAN KUIS -->
+        <section id="quiz" style="display: none;">
+
+            <div class="header-kuis">
+                <p id="nama-mapel"></p>
+                <p id="nomor"></p>
+                <p id="skor-sementara"></p>
+            </div>
+
+            <p id="pertanyaan"></p>
+
+            <div id="daftar-jawaban"></div>
+
+            <button id="lanjut" class="tombol" onclick="soalBerikutnya()">
+                Soal Berikutnya
+            </button>
+
+            <button id="ganti" class="tombol" onclick="gantiMapel()">
+                Ganti Mata Pelajaran
+            </button>
+        </section>
+
+        <!-- HASIL KUIS -->
+        <div id="hasil"></div>
+
+        <button id="ulang" class="tombol" onclick="ulangQuiz()" style="display: none;">
+            Ulangi Quiz
+        </button>
+
+        <p class="keterangan">
+            Aplikasi kuis edukasi sederhana berbasis HTML, CSS, dan JavaScript.
+        </p>
+
+    </div>
+
+    <script>
+        /*
+         * BANK SOAL
+         *
+         * Format:
+         * [
+         *     "Pertanyaan",
+         *     ["Pilihan A", "Pilihan B", "Pilihan C", "Pilihan D"],
+         *     indeksJawabanBenar
+         * ]
+         *
+         * Indeks dimulai dari 0:
+         * 0 = pilihan pertama
+         * 1 = pilihan kedua
+         * 2 = pilihan ketiga
+         * 3 = pilihan keempat
+         */
+
+        const bankSoal = {
+
+            "Matematika": [
+                [
+                    "Hasil dari 12 + 8 adalah ...",
+                    ["18", "20", "22", "24"],
+                    1
+                ],
+                [
+                    "Hasil dari 9 × 7 adalah ...",
+                    ["56", "63", "72", "81"],
+                    1
+                ],
+                [
+                    "Akar kuadrat dari 64 adalah ...",
+                    ["6", "7", "8", "9"],
+                    2
+                ],
+                [
+                    "Luas persegi dengan sisi 5 cm adalah ...",
+                    ["10 cm²", "20 cm²", "25 cm²", "30 cm²"],
+                    2
+                ],
+                [
+                    "Hasil dari 100 ÷ 4 adalah ...",
+                    ["20", "25", "30", "40"],
+                    1
+                ],
+                [
+                    "Bangun datar yang memiliki tiga sisi adalah ...",
+                    ["Persegi", "Segitiga", "Lingkaran", "Trapesium"],
+                    1
+                ],
+                [
+                    "Nilai dari 3² adalah ...",
+                    ["6", "8", "9", "12"],
+                    2
+                ],
+                [
+                    "Bilangan prima berikut adalah ...",
+                    ["4", "6", "9", "11"],
+                    3
+                ],
+                [
+                    "Setengah dari 80 adalah ...",
+                    ["20", "30", "40", "50"],
+                    2
+                ],
+                [
+                    "Hasil dari 15 - 7 adalah ...",
+                    ["6", "7", "8", "9"],
+                    2
+                ]
+            ],
+
+            "Bahasa Indonesia": [
+                [
+                    "Gagasan utama adalah ...",
+                    ["Pokok pikiran", "Kalimat terakhir", "Kata sulit", "Judul"],
+                    0
+                ],
+                [
+                    "Lawan kata tinggi adalah ...",
+                    ["Panjang", "Rendah", "Besar", "Lebar"],
+                    1
+                ],
+                [
+                    "Persamaan kata indah adalah ...",
+                    ["Buruk", "Cantik", "Kotor", "Lambat"],
+                    1
+                ],
+                [
+                    "Cerita dengan tokoh hewan disebut ...",
+                    ["Fabel", "Biografi", "Berita", "Pidato"],
+                    0
+                ],
+                [
+                    "Kalimat untuk memerintah disebut ...",
+                    ["Kalimat tanya", "Kalimat berita", "Kalimat perintah", "Kalimat seru"],
+                    2
+                ],
+                [
+                    "Teks yang berisi langkah-langkah disebut teks ...",
+                    ["Deskripsi", "Prosedur", "Narasi", "Eksposisi"],
+                    1
+                ],
+                [
+                    "Kata berlari termasuk kata ...",
+                    ["Benda", "Kerja", "Sifat", "Bilangan"],
+                    1
+                ],
+                [
+                    "Kalimat berita biasanya diakhiri tanda ...",
+                    ["Koma", "Titik", "Tanya", "Seru"],
+                    1
+                ],
+                [
+                    "Pemberi informasi dalam wawancara disebut ...",
+                    ["Pewawancara", "Narasumber", "Pembaca", "Penonton"],
+                    1
+                ],
+                [
+                    "Pantun memiliki ... baris.",
+                    ["2", "3", "4", "5"],
+                    2
+                ]
+            ],
+
+            "Bahasa Inggris": [
+                [
+                    "Arti kata house adalah ...",
+                    ["Rumah", "Sekolah", "Kantor", "Taman"],
+                    0
+                ],
+                [
+                    "I ... a student.",
+                    ["am", "is", "are", "be"],
+                    0
+                ],
+                [
+                    "She ... a book.",
+                    ["read", "reads", "reading", "are read"],
+                    1
+                ],
+                [
+                    "The opposite of big is ...",
+                    ["Tall", "Small", "Long", "Wide"],
+                    1
+                ],
+                [
+                    "English word for anjing is ...",
+                    ["Cat", "Bird", "Dog", "Fish"],
+                    2
+                ],
+                [
+                    "Good morning berarti ...",
+                    ["Selamat malam", "Selamat pagi", "Selamat siang", "Selamat jalan"],
+                    1
+                ],
+                [
+                    "They ... playing football.",
+                    ["is", "am", "are", "be"],
+                    2
+                ],
+                [
+                    "The color of grass is ...",
+                    ["Blue", "Green", "Red", "Black"],
+                    1
+                ],
+                [
+                    "There ... two pencils.",
+                    ["is", "am", "are", "be"],
+                    2
+                ],
+                [
+                    "Thank you berarti ...",
+                    ["Maaf", "Tolong", "Terima kasih", "Sama-sama"],
+                    2
+                ]
+            ],
+
+            "IPA": [
+                [
+                    "Satuan SI untuk panjang adalah ...",
+                    ["Kilogram", "Meter", "Sekon", "Newton"],
+                    1
+                ],
+                [
+                    "Alat untuk mengukur suhu adalah ...",
+                    ["Barometer", "Termometer", "Amperemeter", "Dinamometer"],
+                    1
+                ],
+                [
+                    "Partikel terkecil penyusun unsur disebut ...",
+                    ["Atom", "Sel", "Jaringan", "Organ"],
+                    0
+                ],
+                [
+                    "Rumus kimia air adalah ...",
+                    ["CO₂", "O₂", "H₂O", "NaCl"],
+                    2
+                ],
+                [
+                    "Unit terkecil makhluk hidup adalah ...",
+                    ["Atom", "Sel", "Organ", "Jaringan"],
+                    1
+                ],
+                [
+                    "Organ untuk memompa darah adalah ...",
+                    ["Paru-paru", "Jantung", "Ginjal", "Lambung"],
+                    1
+                ],
+                [
+                    "Tumbuhan membuat makanan melalui proses ...",
+                    ["Respirasi", "Fotosintesis", "Pencernaan", "Ekskresi"],
+                    1
+                ],
+                [
+                    "Energi karena gerak disebut energi ...",
+                    ["Panas", "Kinetik", "Kimia", "Cahaya"],
+                    1
+                ],
+                [
+                    "Hewan pemakan tumbuhan disebut ...",
+                    ["Karnivora", "Herbivora", "Omnivora", "Insektivora"],
+                    1
+                ],
+                [
+                    "Gas yang diperlukan manusia untuk bernapas adalah ...",
+                    ["Nitrogen", "Oksigen", "Karbon dioksida", "Hidrogen"],
+                    1
+                ]
+            ],
+
+            "IPS": [
+                [
+                    "Indonesia merdeka pada tanggal ...",
+                    ["20 Mei 1908", "28 Oktober 1928", "17 Agustus 1945", "10 November 1945"],
+                    2
+                ],
+                [
+                    "Benua terbesar di dunia adalah ...",
+                    ["Afrika", "Asia", "Eropa", "Australia"],
+                    1
+                ],
+                [
+                    "Kegiatan menghasilkan barang disebut ...",
+                    ["Produksi", "Konsumsi", "Distribusi", "Promosi"],
+                    0
+                ],
+                [
+                    "Pengguna barang disebut ...",
+                    ["Produsen", "Konsumen", "Distributor", "Agen"],
+                    1
+                ],
+                [
+                    "Hubungan timbal balik manusia disebut ...",
+                    ["Interaksi sosial", "Produksi", "Mobilitas", "Persaingan"],
+                    0
+                ],
+                [
+                    "Aturan dalam masyarakat disebut ...",
+                    ["Norma", "Harga", "Peta", "Produksi"],
+                    0
+                ],
+                [
+                    "Indonesia terletak di antara Benua Asia dan ...",
+                    ["Afrika", "Eropa", "Australia", "Amerika"],
+                    2
+                ],
+                [
+                    "Tempat penjual dan pembeli bertemu disebut ...",
+                    ["Pasar", "Bank", "Koperasi", "Kantor"],
+                    0
+                ],
+                [
+                    "Sumpah Pemuda diperingati setiap tanggal ...",
+                    ["20 Mei", "28 Oktober", "17 Agustus", "10 November"],
+                    1
+                ],
+                [
+                    "Kumpulan beberapa pulau disebut ...",
+                    ["Benua", "Kepulauan", "Pegunungan", "Dataran"],
+                    1
+                ]
+            ],
+
+            "Informatika": [
+                [
+                    "Kepanjangan CPU adalah ...",
+                    [
+                        "Central Processing Unit",
+                        "Computer Personal Unit",
+                        "Central Program User",
+                        "Control Processing Utility"
+                    ],
+                    0
+                ],
+                [
+                    "Alat untuk mengetik disebut ...",
+                    ["Monitor", "Keyboard", "Printer", "Speaker"],
+                    1
+                ],
+                [
+                    "Contoh sistem operasi adalah ...",
+                    ["Windows", "Google", "YouTube", "HTML"],
+                    0
+                ],
+                [
+                    "Otak komputer disebut ...",
+                    ["CPU", "Mouse", "Monitor", "Flashdisk"],
+                    0
+                ],
+                [
+                    "Program untuk menjelajah internet disebut ...",
+                    ["Browser", "Compiler", "Kalkulator", "Antivirus"],
+                    0
+                ],
+                [
+                    "Python termasuk bahasa ...",
+                    ["Pemrograman", "Markup", "Musik", "Desain"],
+                    0
+                ],
+                [
+                    "Alat untuk menampilkan gambar adalah ...",
+                    ["Monitor", "Keyboard", "Mouse", "Mikrofon"],
+                    0
+                ],
+                [
+                    "Penyimpanan sementara komputer disebut ...",
+                    ["RAM", "ROM", "Hard disk", "CD"],
+                    0
+                ],
+                [
+                    "Internet berguna untuk ...",
+                    [
+                        "Menghubungkan jaringan",
+                        "Memasak",
+                        "Mencetak uang",
+                        "Menghapus data"
+                    ],
+                    0
+                ],
+                [
+                    "HTML digunakan untuk membuat ...",
+                    [
+                        "Struktur halaman web",
+                        "Musik",
+                        "Kamera",
+                        "Perangkat keras"
+                    ],
+                    0
+                ]
+            ]
+        };
+
+
+        let mapelSekarang = "";
+        let soalAktif = [];
+        let nomorSekarang = 0;
+        let skor = 0;
+        let sudahMenjawab = false;
+
+
+        const namaMapel = Object.keys(bankSoal);
+
+
+        function tampilkanMenuMapel() {
+            const daftarMapel =
+                document.getElementById("daftar-mapel");
+
+            daftarMapel.innerHTML = "";
+
+            namaMapel.forEach(function(nama) {
+                const tombol = document.createElement("button");
+
+                tombol.textContent = nama;
+                tombol.className = "mapel";
+
+                tombol.onclick = function() {
+                    mulaiQuiz(nama);
+                };
+
+                daftarMapel.appendChild(tombol);
+            });
+        }
+
+
+        function mulaiQuiz(nama) {
+            mapelSekarang = nama;
+            soalAktif = bankSoal[nama];
+
+            nomorSekarang = 0;
+            skor = 0;
+            sudahMenjawab = false;
+
+            document.getElementById("menu-mapel").style.display = "none";
+            document.getElementById("quiz").style.display = "block";
+            document.getElementById("hasil").innerHTML = "";
+            document.getElementById("ulang").style.display = "none";
+
+            document.getElementById("nama-mapel").textContent =
+                "Mapel: " + mapelSekarang;
+
+            tampilkanSoal();
+        }
+
+
+        function tampilkanSoal() {
+            const data = soalAktif[nomorSekarang];
+
+            document.getElementById("nomor").textContent =
+                "Soal " +
+                (nomorSekarang + 1) +
+                " dari " +
+                soalAktif.length;
+
+            document.getElementById("skor-sementara").textContent =
+                "Skor: " + skor;
+
+            document.getElementById("pertanyaan").textContent =
+                data[0];
+
+            const daftarJawaban =
+                document.getElementById("daftar-jawaban");
+
+            daftarJawaban.innerHTML = "";
+
+            sudahMenjawab = false;
+
+            data[1].forEach(function(pilihan, index) {
+                const tombol = document.createElement("button");
+
+                tombol.textContent =
+                    String.fromCharCode(65 + index) +
+                    ". " +
+                    pilihan;
+
+                tombol.className = "jawaban";
+
+                tombol.onclick = function() {
+                    periksaJawaban(index, tombol);
+                };
+
+                daftarJawaban.appendChild(tombol);
+            });
+
+            if (nomorSekarang === soalAktif.length - 1) {
+                document.getElementById("lanjut").textContent =
+                    "Lihat Hasil";
+            } else {
+                document.getElementById("lanjut").textContent =
+                    "Soal Berikutnya";
+            }
+        }
+
+
+        function periksaJawaban(index, tombolDipilih) {
+            if (sudahMenjawab) {
+                return;
+            }
+
+            sudahMenjawab = true;
+
+            const jawabanBenar =
+                soalAktif[nomorSekarang][2];
+
+            const semuaJawaban =
+                document.querySelectorAll(".jawaban");
+
+            semuaJawaban.forEach(function(tombol, posisi) {
+                tombol.disabled = true;
+
+                if (posisi === jawabanBenar) {
+                    tombol.classList.add("benar");
+                }
+            });
+
+            if (index === jawabanBenar) {
+                tombolDipilih.classList.add("benar");
+                skor++;
+            } else {
+                tombolDipilih.classList.add("salah");
+            }
+
+            document.getElementById("skor-sementara").textContent =
+                "Skor: " + skor;
+        }
+
+
+        function soalBerikutnya() {
+            if (!sudahMenjawab) {
+                alert("Pilih jawaban terlebih dahulu!");
+                return;
+            }
+
+            nomorSekarang++;
+
+            if (nomorSekarang < soalAktif.length) {
+                tampilkanSoal();
+            } else {
+                tampilkanHasil();
+            }
+        }
+
+
+        function tampilkanHasil() {
+            document.getElementById("quiz").style.display = "none";
+
+            const nilai =
+                Math.round((skor / soalAktif.length) * 100);
+
+            let pesan = "";
+
+            if (nilai >= 90) {
+                pesan = "Sangat baik!";
+            } else if (nilai >= 75) {
+                pesan = "Bagus, terus belajar!";
+            } else if (nilai >= 60) {
+                pesan = "Cukup baik, tetap semangat!";
+            } else {
+                pesan = "Jangan menyerah, coba lagi!";
+            }
+
+            document.getElementById("hasil").innerHTML =
+                "Quiz Selesai!<br><br>" +
+                "Mata pelajaran: " + mapelSekarang +
+                "<br>Jawaban benar: " +
+                skor +
+                " dari " +
+                soalAktif.length +
+                "<br>Nilai: " +
+                nilai +
+                "<br><br>" +
+                pesan;
+
+            document.getElementById("ulang").style.display = "block";
+        }
+
+
+        function ulangQuiz() {
+            mulaiQuiz(mapelSekarang);
+        }
+
+
+        function gantiMapel() {
+            document.getElementById("quiz").style.display = "none";
+            document.getElementById("hasil").innerHTML = "";
+            document.getElementById("ulang").style.display = "none";
+            document.getElementById("menu-mapel").style.display = "block";
+        }
+
+
+        tampilkanMenuMapel();
+    </script>
+
+</body>
+</html>
